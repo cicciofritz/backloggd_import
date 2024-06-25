@@ -1,6 +1,9 @@
 # Byte-compiled / optimized / DLL files
 
 auth.py
+game_err.csv
+game_id.csv
+#game.csv leave commented as template
 
 __pycache__/
 *.py[cod]
