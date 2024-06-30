@@ -1,4 +1,4 @@
-import requests, time
+import requests, time, sqlite3, pathlib, platform
 
 #personal authentication data stored in auth.py file present in .gitignore, consider to use that file instead
 try:
@@ -66,6 +66,25 @@ except:
    py_csrf_token = 'guest_csrf_token'
    py_userid = 'guest_userid'
    py_username='guest_username'
+
+#on linux environment try to catch cookie information from firefox default path
+if platform.system() == 'Linux':
+   for p in pathlib.Path(f'{pathlib.Path.home()}/.mozilla/firefox').rglob("cookies.sqlite"):
+      try:
+         dbfile = p.resolve()
+         #print(dbfile)
+         con = sqlite3.connect(dbfile)
+         cur = con.cursor()
+         cur.execute("select * from moz_cookies where host = '.backloggd.com'")
+         results = (cur.fetchall())[0]
+         cookie = dict(zip(results[::2], results[1::2]))
+         py_user_token = cookie['remember_user_token']
+         print(cookie['remember_user_token'])
+         con.close()
+      except:
+         continue
+else:
+   print('Not already available on Windows and MacOS')
 
 
 with open('game_id.csv') as file:
